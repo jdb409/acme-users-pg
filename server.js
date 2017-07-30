@@ -46,12 +46,12 @@ app.use(function (err, req, res, next) {
 
 app.listen(port, function () {
     console.log(`Listening on port ${port}`);
-    // db.sync(function (err) {
-    //     if (err) console.log(err);
-    //     db.seed(function (err) {
-    //         if (err) console.log(err);
-    //     })
-    // });
+    db.sync(function (err) {
+        if (err) console.log(err);
+        db.seed(function (err) {
+            if (err) console.log(err);
+        })
+    });
 });
 
 
