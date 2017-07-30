@@ -9,7 +9,9 @@ var port = process.env.PORT || 3000;
 
 app.use(require('method-override')('_method'));
 app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use('/vendor', express.static(path.join(__dirname, 'node_modules')));
+
 app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 nunjucks.configure('views', { noCache: true });
@@ -31,11 +33,6 @@ app.get('/', function (req, res, next) {
             res.render('index', { uCount: res.locals.uCount, mCount: res.locals.mCount });
         });
     });
-
-    // var syncBtn = document.getElementById('sync');
-    // syncBtn.addEventListener('click', function(){
-
-    // });
 });
 
 app.use('/users', require('./routes/users'));
@@ -50,7 +47,7 @@ app.listen(port, function () {
         if (err) console.log(err);
         db.seed(function (err) {
             if (err) console.log(err);
-        })
+        });
     });
 });
 

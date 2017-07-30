@@ -22,6 +22,18 @@ function sync(cb) {
     });
 }
 
+function seed(cb) {
+    createUser({ name: 'Jon', manager: 'false' }, function (err) {
+        if (err) return cb(err);
+        cb(null);
+    });
+
+    createUser({ name: 'Carolyn', manager: 'True' }, function (err) {
+        if (err) return cb(err);
+        cb(null);
+    });
+}
+
 function createUser(user, cb) {
     var sql = `
     INSERT INTO users
@@ -34,18 +46,6 @@ function createUser(user, cb) {
         cb(err);
     });
 
-}
-
-function seed(cb) {
-    createUser({ name: 'Jon', manager: 'false' }, function (err) {
-        if (err) return cb(err);
-        cb(null);
-    });
-
-    createUser({ name: 'Carolyn', manager: 'True' }, function (err) {
-        if (err) return cb(err);
-        cb(null);
-    });
 }
 
 function getUsers(cb) {

@@ -3,7 +3,6 @@ var db = require('../db');
 
 router.get('/', function (req, res, next) {
     db.getUsers(function (users) {
-        // if (err) return next(err);
         res.render('users', { users: users, uCount: res.locals.uCount, mCount: res.locals.mCount });
     });
 });
@@ -11,7 +10,7 @@ router.get('/', function (req, res, next) {
 router.post('/', function (req, res, next) {
     db.createUser({ name: req.body.user, manager: req.body.manager }, function (err) {
         if (err) return next(err);
-        else{
+        else {
             if (req.body.manager) {
                 res.redirect('/users/managers');
             } else {
@@ -19,7 +18,6 @@ router.post('/', function (req, res, next) {
             }
         }
     });
-
 });
 
 router.delete('/:id', function (req, res, next) {
@@ -31,13 +29,12 @@ router.delete('/:id', function (req, res, next) {
 
 router.get('/managers', function (req, res, next) {
     db.getManagers(function (managers) {
-        // if (err) return next(err);
         res.render('managers', { managers: managers, uCount: res.locals.uCount, mCount: res.locals.mCount });
     });
 });
 
 router.put('/:id', function (req, res, next) {
-    
+
     db.updateInfo(req.params.id * 1, function (err, status) {
         if (err) return next(err);
         console.log(status);
@@ -47,7 +44,7 @@ router.put('/:id', function (req, res, next) {
             res.redirect('/users');
         }
     });
-     
+
 });
 
 

@@ -1,15 +1,17 @@
-{% extends 'layout.html' %}
+{% extends 'layout.html' %} {% block content %}
+<h1> Managers</h1>
+<div class='panel panel-info'>
+    <ul class='list-group'>
+        {% for manager in managers %}
 
-{% block content %}
-    <h1> Managers</h1>
-     {% for manager in managers %}
-     <div class = 'panel panel-info'>
-        <h3 class = 'panel-heading'> {{manager.name}} </h3>
-        <h3 class = 'panel-content'> 
-            <form method = 'post' action = '/users/{{manager.id}}?_method=PUT'>
-                <button class = 'btn btn-danger'>Demote!</button>
+        <div class='list-group-item'>
+            <h3> {{manager.name}} </h3>
+            <form method='post' action='/users/{{manager.id}}?_method=PUT'>
+                <button class='btn btn-danger btn-block'>Demote!</button>
             </form>
-        </h3>
-    </div>
-    {% endfor %} 
+        </div>
+
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}
