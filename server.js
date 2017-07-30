@@ -31,17 +31,27 @@ app.get('/', function (req, res, next) {
             res.render('index', { uCount: res.locals.uCount, mCount: res.locals.mCount });
         });
     });
+
+    // var syncBtn = document.getElementById('sync');
+    // syncBtn.addEventListener('click', function(){
+
+    // });
 });
 
 app.use('/users', require('./routes/users'));
 
+app.use(function (err, req, res, next) {
+    res.render('error', {err: err});
+})
+
 app.listen(port, function () {
     console.log(`Listening on port ${port}`);
-    db.sync(function (err) {
-        if (err) console.log(err);
-        db.seed(function (err) {
-            if (err) console.log(err);
-        })
-    });
+    // db.sync(function (err) {
+    //     if (err) console.log(err);
+    //     db.seed(function (err) {
+    //         if (err) console.log(err);
+    //     })
+    // });
 });
+
 

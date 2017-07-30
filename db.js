@@ -11,7 +11,7 @@ function sync(cb) {
         DROP TABLE IF EXISTS users;
         Create TABLE users(
             id SERIAL PRIMARY KEY,
-            name CHARACTER VARYING(255),
+            name CHARACTER VARYING(255) NOT NULL UNIQUE,
             manager BOOLEAN
             );
         `;
@@ -31,6 +31,7 @@ function createUser(user, cb) {
     var manager = user.manager || false;
     client.query(sql, [user.name, manager], function (err) {
         if (err) return cb(err);
+        cb(err);
     });
 
 }
@@ -40,6 +41,7 @@ function seed(cb) {
         if (err) return cb(err);
         cb(null);
     });
+
     createUser({ name: 'Carolyn', manager: 'True' }, function (err) {
         if (err) return cb(err);
         cb(null);
@@ -64,7 +66,7 @@ function deleteUser(id, cb) {
         WHERE id = $1;
     `;
 
-    client.query(sql, [id], function (err, result) {
+    client.query(sql, [id], function (err) {
         if (err) return cb(err);
         cb(null);
     })
@@ -78,7 +80,7 @@ function getManagers(cb) {
     `;
 
     client.query(sql, function (err, result) {
-        if (err) cb(err);
+        if (err) return cb(err);
         cb(result.rows);
     });
 }
@@ -96,9 +98,12 @@ function updateInfo(id, cb) {
         SET manager = $1
         WHERE id = $2
         `;
-        var managerStatus = !result.rows[0].manager
+
+        var managerStatus = !result.rows[0].manager;
+
         client.query(sql, [managerStatus, id], function (err) {
             if (err) return cb(err);
+            console.log(managerStatus);
             cb(null, managerStatus);
         });
     })
