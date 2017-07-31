@@ -27,7 +27,6 @@ app.use(function (req, res, next) {
 });
 
 app.get('/', function (req, res, next) {
-    //res.locals not showing here unless i use it within my db functions, why?
     db.getUsers(function () {
         db.getManagers(function () {
             res.render('index', { uCount: res.locals.uCount, mCount: res.locals.mCount });
@@ -50,5 +49,4 @@ app.listen(port, function () {
         });
     });
 });
-
 

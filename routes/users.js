@@ -10,12 +10,11 @@ router.get('/', function (req, res, next) {
 router.post('/', function (req, res, next) {
     db.createUser({ name: req.body.user, manager: req.body.manager }, function (err) {
         if (err) return next(err);
-        else {
-            if (req.body.manager) {
-                res.redirect('/users/managers');
-            } else {
-                res.redirect('/users')
-            }
+
+        if (req.body.manager) {
+            res.redirect('/users/managers');
+        } else {
+            res.redirect('/users')
         }
     });
 });
@@ -34,10 +33,8 @@ router.get('/managers', function (req, res, next) {
 });
 
 router.put('/:id', function (req, res, next) {
-
     db.updateInfo(req.params.id * 1, function (err, status) {
         if (err) return next(err);
-        console.log(status);
         if (status) {
             res.redirect('/users/managers');
         } else {
@@ -46,6 +43,5 @@ router.put('/:id', function (req, res, next) {
     });
 
 });
-
 
 module.exports = router;

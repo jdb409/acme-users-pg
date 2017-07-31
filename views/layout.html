@@ -3,12 +3,14 @@
     <head>
         <title>Acme Users</title>
         <link rel = 'stylesheet' href = '/vendor/bootstrap/dist/css/bootstrap.css'>
+        <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:600" rel="stylesheet">
+        <link href="/vendor/stylesheets/stylesheet.css" rel="stylesheet">
     </head>
     <body class="container">
         <ul class = 'nav nav-tabs'>
             <li {% if not users and not managers%} class = 'active' {% endif %}><a href = '/'>Home</a></li>
-            <li {% if users %} class = 'active' {% endif %} ><a href = '/users'>Users {{uCount}}</a></li> 
-            <li {% if managers %} class = 'active' {% endif %} ><a href = '/users/managers'>Managers {{mCount}}</a></li>
+            <li {% if users %} class = 'active' {% endif %} ><a href = '/users'>Users ({{uCount}})</a></li> 
+            <li {% if managers %} class = 'active' {% endif %} ><a href = '/users/managers'>Managers ({{mCount}})</a></li>
         </ul>
         {% block content %}
         {% endblock %}

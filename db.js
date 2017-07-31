@@ -60,18 +60,6 @@ function getUsers(cb) {
     });
 }
 
-function deleteUser(id, cb) {
-    var sql = `
-        DELETE FROM users
-        WHERE id = $1;
-    `;
-
-    client.query(sql, [id], function (err) {
-        if (err) return cb(err);
-        cb(null);
-    })
-}
-
 function getManagers(cb) {
     var sql = `
         SELECT *
@@ -83,6 +71,18 @@ function getManagers(cb) {
         if (err) return cb(err);
         cb(result.rows);
     });
+}
+
+function deleteUser(id, cb) {
+    var sql = `
+        DELETE FROM users
+        WHERE id = $1;
+    `;
+
+    client.query(sql, [id], function (err) {
+        if (err) return cb(err);
+        cb(null);
+    })
 }
 
 function updateInfo(id, cb) {
@@ -103,7 +103,6 @@ function updateInfo(id, cb) {
 
         client.query(sql, [managerStatus, id], function (err) {
             if (err) return cb(err);
-            console.log(managerStatus);
             cb(null, managerStatus);
         });
     })
