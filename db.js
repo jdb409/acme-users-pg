@@ -6,7 +6,18 @@ client.connect(function (err) {
     if (err) console.log(err.message);
 });
 
-function sync(cb) {
+function query(sql, params){
+    return new Promise(function(resolve, reject){
+        client.query(sql, params, function(err, result){
+            if (err){
+                return reject(err);
+            }
+            resolve(result);
+        });
+    });
+}
+
+function sync() {
     var sql = `
         DROP TABLE IF EXISTS users;
         Create TABLE users(
@@ -16,35 +27,36 @@ function sync(cb) {
             );
         `;
 
-    client.query(sql, function (err) {
-        if (err) return cb(err);
-        cb(null);
-    });
+    return query(sql);
 }
 
-function seed(cb) {
-    createUser({ name: 'Jon', manager: 'false' }, function (err) {
-        if (err) return cb(err);
-        cb(null);
-    });
+function seed() {
+    createUser({ name: 'Jon', manager: 'false' })
+        .then(function(result){
+            console.log(result);
+        })
 
-    createUser({ name: 'Carolyn', manager: 'True' }, function (err) {
-        if (err) return cb(err);
-        cb(null);
-    });
+    // createUser({ name: 'Carolyn', manager: 'True' }, function (err) {
+    //     if (err) return cb(err);
+    //     cb(null);
+    // });
 }
 
-function createUser(user, cb) {
+function createUser(user) {
     var sql = `
     INSERT INTO users
     (name, manager)
     VALUES ($1, $2)
 `;
     var manager = user.manager || false;
-    client.query(sql, [user.name, manager], function (err) {
-        if (err) return cb(err);
-        cb(err);
-    });
+    // client.query(sql, [user.name, manager], function (err) {
+    //     if (err) return cb(err);
+    //     cb(err);
+    // });
+    query(sql, [user.name, manager])
+        .then(function(result){
+            return result.rows;
+        });
 
 }
 
