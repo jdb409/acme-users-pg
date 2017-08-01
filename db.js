@@ -6,10 +6,10 @@ client.connect(function (err) {
     if (err) console.log(err.message);
 });
 
-function query(sql, params){
-    return new Promise(function(resolve, reject){
-        client.query(sql, params, function(err, result){
-            if (err){
+function query(sql, params) {
+    return new Promise(function (resolve, reject) {
+        client.query(sql, params, function (err, result) {
+            if (err) {
                 return reject(err);
             }
             resolve(result);
@@ -31,15 +31,7 @@ function sync() {
 }
 
 function seed() {
-    createUser({ name: 'Jon', manager: 'false' })
-        .then(function(result){
-            console.log(result);
-        })
-
-    // createUser({ name: 'Carolyn', manager: 'True' }, function (err) {
-    //     if (err) return cb(err);
-    //     cb(null);
-    // });
+    return Promise.all([createUser({ name: 'Jon', manager: 'false' }), createUser({ name: 'Carolyn', manager: 'True' })]);
 }
 
 function createUser(user) {
@@ -49,75 +41,86 @@ function createUser(user) {
     VALUES ($1, $2)
 `;
     var manager = user.manager || false;
-    // client.query(sql, [user.name, manager], function (err) {
-    //     if (err) return cb(err);
-    //     cb(err);
-    // });
-    query(sql, [user.name, manager])
-        .then(function(result){
-            return result.rows;
-        });
+    return query(sql, [user.name, manager]);
 
 }
 
-function getUsers(cb) {
+function getUsers() {
     var sql = `
         SELECT *
         FROM users
     `;
 
-    client.query(sql, function (err, result) {
-        if (err) return cb(err);
-        cb(result.rows);
-    });
+    return query(sql, null)
+        .then(function (result) {
+            return result;
+        });
 }
 
-function getManagers(cb) {
+function getManagers() {
     var sql = `
         SELECT *
         FROM users
         WHERE manager = true;
     `;
 
-    client.query(sql, function (err, result) {
-        if (err) return cb(err);
-        cb(result.rows);
-    });
+    return query(sql, null)
+        .then(function (result) {
+            return result.rows;
+        });
 }
 
-function deleteUser(id, cb) {
+function deleteUser(id) {
     var sql = `
         DELETE FROM users
         WHERE id = $1;
     `;
 
-    client.query(sql, [id], function (err) {
-        if (err) return cb(err);
-        cb(null);
-    })
+    return query(sql, [id]);
+
 }
 
-function updateInfo(id, cb) {
+function updateInfo(id) {
     var sql = `
         SELECT *
         FROM users
         WHERE id = $1;
-    `
-    client.query(sql, [id], function(err, result){
-        if (err) return cb(err);
+        
+    `;
+
+    return query(sql, [id])
+        .then(function (result) {
         sql = `
-        UPDATE users
-        SET manager = $1
-        WHERE id = $2
-        `;
+            UPDATE users
+            SET manager = $1
+            WHERE id = $2
+            `;
 
-        var managerStatus = !result.rows[0].manager;
-
-        client.query(sql, [managerStatus, id], function (err) {
-            if (err) return cb(err);
-            cb(null, managerStatus);
+            var managerStatus = !result.rows[0].manager;
+            
+            return query(sql, [id, managerStatus])
+        }).then(function(result){
+            console.log(result);
+            return result;
+        }).catch(function(err){
+            console.log(err);
         });
-    })
+
+    // client.query(sql, [id], function (err, result) {
+    //     if (err) return cb(err);
+    //     sql = `
+    //     UPDATE users
+    //     SET manager = $1
+    //     WHERE id = $2
+    //     `;
+
+    //     var managerStatus = !result.rows[0].manager;
+
+    //     client.query(sql, [managerStatus, id], function (err) {
+    //         if (err) return cb(err);
+    //         cb(null, managerStatus);
+    //     });
+    // })
 }
 
 module.exports = {

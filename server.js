@@ -17,21 +17,26 @@ app.engine('html', nunjucks.render);
 nunjucks.configure('views', { noCache: true });
 
 app.use(function (req, res, next) {
-    db.getUsers(function (users) {
-        res.locals.uCount = users.length;
-    });
-    db.getManagers(function (managers) {
-        res.locals.mCount = managers.length;
-    });
+    db.getUsers()
+        .then(function(users){
+            res.locals.uCount = users.rows.length;
+            return db.getManagers();
+        }).then(function(managers){
+            res.locals.mCount = managers.length;
+        });
     next();
 });
 
 app.get('/', function (req, res, next) {
-    db.getUsers(function () {
-        db.getManagers(function () {
+  db.getUsers()
+        .then(function(users){
+            res.locals.uCount = users.rows.length;
+            return db.getManagers();
+        }).then(function(managers){
+            res.locals.mCount = managers.length;
+        }).then(function(){
             res.render('index', { uCount: res.locals.uCount, mCount: res.locals.mCount });
         });
-    });
 });
 
 app.use('/users', require('./routes/users'));
@@ -43,10 +48,14 @@ app.use(function (err, req, res, next) {
 app.listen(port, function () {
     console.log(`Listening on port ${port}`);
    db.sync()
-   .then(function(result){
-        return db.seed();
+   .then(function(){
+    return db.seed();
+   }).then(function(){
+    return db.getUsers();
+   }).then(function(result){
+    // console.log(result.rows);
    }).catch(function(err){
-        console.log(err);
+    console.log(err);
    });
 });
 
